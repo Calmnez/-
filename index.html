@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>나는 어떤 불안을 가지고 있을까</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+<style>
+  :root{
+    --paper:#F6F3EC; --card:#FFFFFF; --ink:#2C2A26; --soft:#6E6A60;
+    --line:#E4DFD3; --sage:#5C8374; --sage-bg:#E8F0EC; --sage-deep:#3C5A4F;
+    --accent:#C97B4A; --accent-bg:#F6E9DE; --r:16px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--paper);color:var(--ink);
+    font-family:"Pretendard","Pretendard Variable",-apple-system,system-ui,sans-serif;
+    line-height:1.65;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:620px;margin:0 auto;padding:28px 20px 80px}
+  .screen{display:none;animation:fade .4s ease}
+  .screen.on{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  .eyebrow{font-size:13px;letter-spacing:.08em;color:var(--sage);font-weight:600;text-transform:uppercase;margin-bottom:14px}
+  h1{font-size:30px;font-weight:700;letter-spacing:-.02em;line-height:1.3;margin-bottom:20px}
+  h2{font-size:26px;font-weight:700;letter-spacing:-.01em;margin-bottom:4px}
+  .subtitle{font-size:16px;color:var(--accent);font-weight:600;margin-bottom:6px}
+  .second{font-size:13.5px;color:var(--soft);margin-bottom:6px}
+  p{color:var(--soft);font-size:16px;margin-bottom:14px}
+
+  .note{background:var(--sage-bg);border-radius:12px;padding:13px 16px;font-size:13.5px;color:var(--sage-deep);margin:20px 0}
+  .btn{display:inline-block;width:100%;text-align:center;background:var(--ink);color:#fff;border:none;
+    padding:16px;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;font-family:inherit;
+    transition:transform .12s ease,opacity .2s}
+  .btn:hover{opacity:.9}.btn:active{transform:scale(.985)}
+  .btn:focus-visible{outline:3px solid var(--sage);outline-offset:2px}
+
+  .progress{height:5px;background:var(--line);border-radius:99px;margin-bottom:26px;overflow:hidden}
+  .progress>i{display:block;height:100%;background:var(--sage);border-radius:99px;width:0;transition:width .4s ease}
+  .qnum{font-size:13px;color:var(--soft);font-weight:600;margin-bottom:10px}
+  .qtext{font-size:21px;font-weight:700;line-height:1.4;letter-spacing:-.01em;margin-bottom:22px}
+  .opts{display:flex;flex-direction:column;gap:12px}
+  .opt{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:17px 18px;
+    font-size:16px;text-align:left;cursor:pointer;font-family:inherit;color:var(--ink);line-height:1.5;
+    transition:border-color .15s,background .15s,transform .12s}
+  .opt:hover{border-color:var(--sage);background:var(--sage-bg)}
+  .opt:active{transform:scale(.99)}
+  .opt:focus-visible{outline:3px solid var(--sage);outline-offset:2px}
+  .back{background:none;border:none;color:var(--soft);font-size:14px;cursor:pointer;font-family:inherit;
+    margin-top:22px;padding:6px 0;text-decoration:underline;text-underline-offset:3px}
+
+  .rtag{display:inline-block;background:var(--accent-bg);color:var(--accent);font-size:13px;font-weight:600;
+    padding:6px 12px;border-radius:99px;margin-bottom:14px}
+  .rcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:24px 22px;margin:18px 0}
+  .rcard h3{font-size:15px;font-weight:700;color:var(--sage-deep);margin-bottom:7px}
+  .rcard p{color:var(--ink);font-size:15.5px}
+  .rcard .sub{color:var(--soft);font-size:14.5px;margin:8px 0 0 0;padding-left:14px;border-left:2px solid var(--sage-bg)}
+  .rx{background:var(--sage-bg);border-radius:14px;padding:18px 20px;margin:18px 0}
+  .rx h3{color:var(--sage-deep);font-size:15px;font-weight:700;margin-bottom:7px}
+  .rx p{color:var(--sage-deep);font-size:15.5px;margin:0}
+
+  .grid{margin:24px 0}
+  .grid .glabel{font-size:12px;color:var(--soft);font-weight:600;margin-bottom:8px;text-align:center}
+  table.axis{width:100%;border-collapse:separate;border-spacing:6px}
+  table.axis th{color:var(--soft);font-weight:600;font-size:12px;padding:2px}
+  table.axis td.cell{background:var(--card);border:1.5px solid var(--line);border-radius:10px;
+    padding:11px 2px;color:var(--soft);font-weight:600;font-size:11.5px;text-align:center}
+  table.axis td.cell.hit{background:var(--sage);border-color:var(--sage);color:#fff}
+  table.axis td.rowlab{color:var(--soft);font-weight:600;font-size:12px;width:42px;text-align:center}
+
+  .pi{margin-top:34px;padding-top:26px;border-top:1px solid var(--line)}
+  .pi .d{font-size:15px;font-weight:600;color:var(--ink);margin-bottom:16px}
+  .pirow{display:flex;gap:10px}
+  .pibtn{flex:1;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 6px;
+    font-size:14.5px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--ink);transition:all .15s}
+  .pibtn:hover{border-color:var(--accent);background:var(--accent-bg)}
+  .pibtn:focus-visible{outline:3px solid var(--sage);outline-offset:2px}
+  .thanks{text-align:center;padding:30px 0 6px;animation:fade .4s}
+  .thanks .big{font-size:19px;font-weight:700;margin-bottom:6px}
+  .share{margin-top:18px}
+  .ghost{background:none;border:1.5px solid var(--line);color:var(--ink)}
+  .ghost:hover{opacity:1;border-color:var(--sage);background:var(--sage-bg)}
+  .foot{text-align:center;font-size:12px;color:var(--soft);margin-top:40px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <section class="screen on" id="intro">
+    <div class="eyebrow">불안 유형 검사</div>
+    <h1>나는 어떤 불안을<br>가지고 있을까?</h1>
+    <div class="note">진단이 아니라, 불안에 반응하는 '나의 방식'을 돌아보는 자기이해용 검사입니다.</div>
+    <button class="btn" onclick="start()">시작하기</button>
+  </section>
+
+  <section class="screen" id="quiz">
+    <div class="progress"><i id="bar"></i></div>
+    <div class="qnum" id="qnum"></div>
+    <div class="qtext" id="qtext"></div>
+    <div class="opts" id="opts"></div>
+    <button class="back" id="backbtn" onclick="back()" style="display:none">← 이전 질문</button>
+  </section>
+
+  <section class="screen" id="result">
+    <div class="rtag" id="rtag"></div>
+    <h2 id="rtitle"></h2>
+    <div class="subtitle" id="rsubtitle"></div>
+    <div class="second" id="rsecond" style="display:none"></div>
+
+    <div class="grid">
+      <div class="glabel">당신의 위치</div>
+      <table class="axis" id="axisgrid"></table>
+    </div>
+
+    <div class="rcard">
+      <h3>무슨 일이 일어나나</h3>
+      <p id="r-what"></p>
+      <div id="r-subs"></div>
+    </div>
+    <div class="rcard">
+      <h3>일상에서 치르는 비용</h3>
+      <p id="r-cost"></p>
+    </div>
+    <div class="rx">
+      <h3>오늘 해볼 한 가지 (if-then)</h3>
+      <p id="r-rx"></p>
+    </div>
+
+    <div class="pi" id="piblock">
+      <div class="d">9유형 전체 프로파일 + 당신에게 맞춘 <b>7일 대처 루틴</b>을 받아본다면, 유료라도 써볼 의향이 있나요?</div>
+      <div class="pirow">
+        <button class="pibtn" onclick="intent('예')">예, 살 것 같다</button>
+        <button class="pibtn" onclick="intent('아마도')">아마도</button>
+        <button class="pibtn" onclick="intent('아니')">아니</button>
+      </div>
+    </div>
+    <div class="thanks" id="thanks" style="display:none">
+      <div class="big">기록됐어요 🙏</div>
+      <p id="thanks-d"></p>
+    </div>
+
+    <div class="share">
+      <button class="btn ghost" onclick="restart()">다시 해보기</button>
+    </div>
+    <div class="foot">불안이 일상을 방해하는 수준이라면 전문가의 도움을 권합니다.</div>
+  </section>
+
+</div>
+
+<script>
+/* ★ 구글시트 저장: 아래 URL을 채우면 응답이 시트에 쌓입니다. 비워두면 검사만 작동. */
+const ENDPOINT_URL = "https://script.google.com/macros/s/AKfyc...../exec";
+
+/* 시간축(time): 과거 P / 현재 N / 미래 F  |  처리축(proc): 사고 M / 행동 B / 도피 X
+   (보기 순서는 섞여 있고, 두 번째 값이 채점용 코드) */
+const Q = [
+  {ax:"proc", t:"불안이 확 올라오면 가장 먼저?", o:[
+    ["배달 어플을 킨다","B"],
+    ["전에 있었던 대화들을 올려본다","M"],
+    ["일단 딴 데로 주의를 돌린다","X"]]},
+  {ax:"time", t:"연인과 다툰 뒤, 가장 신경 쓰이는 건?", o:[
+    ["지금 어색해진 분위기","N"],
+    ["앞으로 관계가 어떻게 될지","F"],
+    ["아까 내가 뱉은 말","P"]]},
+  {ax:"proc", t:"실수한 게 떠오르면 나는?", o:[
+    ["안 떠올리려 다른 걸 본다","X"],
+    ["바로 사과하거나 만회하려 움직인다","B"],
+    ["그 장면을 계속 다시 돌려본다","M"]]},
+  {ax:"time", t:"시험을 망친 날 밤, 머릿속에 맴도는 건?", o:[
+    ["이번 학점 어떡하지","N"],
+    ["어제 조금 더 공부할걸","P"],
+    ["엄마한테 뭐라고 말하지","F"]]},
+  {ax:"proc", t:"스트레스 받으면 나는?", o:[
+    ["인스타그램 릴스를 넘긴다","B"],
+    ["잠을 잔다","X"],
+    ["생각생각생각을 한다","M"]]},
+  {ax:"time", t:"잠들기 전 이불 속에서 떠오르는 건?", o:[
+    ["내일 해야 할 일","F"],
+    ["지금 안 풀린 일","N"],
+    ["오늘 내가 한 일","P"]]},
+  {ax:"proc", t:"불편한 카톡을 받으면?", o:[
+    ["무슨 뜻일지 곱씹으며 해석한다","M"],
+    ["나중에 보겠다며 읽지 않는다","X"],
+    ["바로 확인하거나 답장 초안을 쓴다","B"]]},
+  {ax:"time", t:"발표를 앞두고 가장 신경 쓰이는 것은?", o:[
+    ["말실수할 것 같은 느낌","F"],
+    ["지난번 대답 못한 질문","P"],
+    ["요란하게 뛰는 심장","N"]]},
+  {ax:"proc", t:"시험·발표 같은 평가가 다가오면?", o:[
+    ["10번 20번 반복해서 복습한다","B"],
+    ["모르는 문제가 나올까 걱정한다","M"],
+    ["방이나 책상을 청소한다","X"]]},
+  {ax:"proc", t:"불안할 때 친구들 옆에서 나는", o:[
+    ["대화에서 빠져 딴짓을 한다","X"],
+    ["멍하니 생각에 잠겨 있다","M"],
+    ["계속 폰을 만지작거린다","B"]]}
+];
+
+const PROC_NAME = {M:"사고", B:"행동", X:"도피"};
+const GRID_NAME = {
+  "P|M":"반추","P|B":"수습","P|X":"억압",
+  "N|M":"경계","N|B":"도파민","N|X":"회피",
+  "F|M":"파국","F|B":"통제","F|X":"공상"};
+
+const TYPES = {
+  "P|M":{tag:"과거 · 사고형", name:"반추형", subtitle:"이불킥 무한 재생 중",
+    what:"이미 지나간 일을 머릿속에서 반복 재생합니다. \"그때 왜 그랬을까\"를 계속 돌려보는데, 곱씹는 게 문제를 푸는 것처럼 느껴지지만 대개 같은 자리를 맴돕니다.",
+    subs:[], cost:"과거에 묶여 현재의 에너지가 샙니다. 이미 끝난 일에 오늘을 씁니다.",
+    rx:"\"아까 그거…\"가 떠오르면 → \"지금 내가 할 수 있는 행동이 있나?\"를 묻는다. 없으면 곱씹기는 멈추고, 있으면 그 행동 하나만 적는다."},
+  "P|B":{tag:"과거 · 행동형", name:"수습형", subtitle:"엎질러진 물 다시 담는 중",
+    what:"과거의 실수나 일을 행동으로 바로잡으려 합니다. 사과 메시지를 다시 쓰고, 만회할 방법을 찾고, 이미 끝난 일을 어떻게든 되돌리려 움직입니다.",
+    subs:[], cost:"되돌릴 수 없는 일에 에너지를 쏟다 지칩니다. \"이미 한 건 어차피 안 돌아온다\"를 받아들이기 어렵습니다.",
+    rx:"지난 일을 만회하려는 충동이 올라오면 → \"이건 지금 바로잡을 수 있는 일인가, 이미 끝난 일인가?\"를 먼저 구분한다. 끝난 일이면 교훈 하나만 적고 보낸다."},
+  "P|X":{tag:"과거 · 도피형", name:"억압형", subtitle:"기억은 셀프 편집",
+    what:"불편한 과거를 안 떠올리고 묻어둡니다. 좋았던 것·유리한 것만 남기고 아픈 기억은 흐릿하게 처리합니다. 안 떠올리는 것도 자신을 지키는 방식이지만, 묻은 게 사라지진 않습니다.",
+    subs:[], cost:"직면하지 않은 일이 비슷한 상황에서 불쑥 되살아납니다. 같은 패턴을 반복하기 쉽습니다.",
+    rx:"떠올리기 싫은 일이 자꾸 비집고 나오면 → 통째로 직면하지 말고 \"그 일에서 딱 한 가지만\" 적어본다. 작게 꺼내는 것이 묻어두는 것보다 덜 무겁습니다."},
+  "N|M":{tag:"현재 · 사고형", name:"경계형", subtitle:"전생에 미어캣",
+    what:"지금 이 순간의 위협을 머리로 끊임없이 스캔합니다. 분위기·표정·말투의 작은 변화도 안테나에 걸리고, 늘 경계 모드라 마음이 쉬질 못합니다.",
+    subs:[], cost:"별일 아닌 신호도 위협으로 읽어 에너지가 빨리 소진됩니다. 함께 있는 사람의 기분을 과하게 살피게 됩니다.",
+    rx:"주변을 과하게 살피고 있다고 느끼면 → 잠깐 멈추고 \"방금 그 신호, 사실이야 내 해석이야?\"를 묻고, 지금 통제할 수 있는 것 하나에만 주의를 좁혀본다."},
+  "N|B":{tag:"현재 · 행동형", name:"도파민형", subtitle:"떡볶이에 미친 자",
+    what:"불안이 올라오면 즉각적인 자극으로 마음을 덮습니다. 도피처는 사람마다 다릅니다.",
+    subs:["음식이라면: 떡볶이·치킨이 당기는 그 순간이 사실 불안 신호",
+          "화면이라면: 손에서 폰을 못 놓는 무한 스크롤",
+          "사람이라면: 혼자됨·연애 공백을 유독 못 견딥니다. 그게 약점은 아니에요 — 다룰 수 있는 패턴입니다."],
+    cost:"자극은 잠깐 가라앉히지만 불안의 원인은 그대로라, 같은 루프가 반복됩니다.",
+    rx:"뭔가가 갑자기 강하게 당기면(먹기·폰·연락) → 행동 전에 10초만 멈추고 \"나 지금 불안해서 이걸 찾는구나\" 이름을 붙여본다. 충동과 행동 사이에 틈이 생기면 자동반응이 끊긴다."},
+  "N|X":{tag:"현재 · 도피형", name:"회피형", subtitle:"이불 밖은 위험해",
+    what:"지금의 불안한 대상을 안 보고 미룹니다. 카톡을 안 읽고, 약속을 미루고, '나중에'로 넘깁니다. 잠깐은 편하지만 대상은 그대로 기다립니다.",
+    subs:[], cost:"미룰수록 일이 커지고, 마감 직전 더 큰 불안으로 돌아옵니다.",
+    rx:"피하고 싶은 게 생기면 → 그것의 \"2분짜리 첫 조각\"만 해본다(카톡 미리보기만 읽기, 폴더만 열기). 가장 무서운 건 시작이고, 접촉 자체가 공포를 깎는다."},
+  "F|M":{tag:"미래 · 사고형", name:"파국형", subtitle:"최악의 시나리오 작가",
+    what:"아직 안 일어난 일의 최악을 머릿속에서 미리 상영합니다. \"이보다는 낫겠지\"라는 안심을 얻기도 하는, 나쁘지 않은 대비 전략이에요. 다만 심해지면 일어나지도 않을 일에 오늘을 다 씁니다.",
+    subs:[], cost:"확률 낮은 시나리오에 평온을 미리 지불합니다. 길어지면 비관이 기본값이 됩니다.",
+    rx:"최악의 장면이 떠오르면 → 두 질문으로 바꾼다. \"실제로 일어날 확률은 몇 %?\" + \"정말 일어나면 내 첫 행동 한 가지는?\" 막연한 공포가 구체적 대비로 바뀐다."},
+  "F|B":{tag:"미래 · 행동형", name:"통제형", subtitle:"돌다리도 100번 두드림",
+    what:"미래가 불확실한 게 불편해서 확인·점검·과잉준비로 안심을 삽니다. 돌다리도 100번 두드리고, 완벽히 준비되기 전엔 마음을 못 놓습니다.",
+    subs:[], cost:"\"한 번 더 확인\"이 끝이 없어 시간이 새고, 기준이 높아 시작·완료가 늦어집니다.",
+    rx:"\"한 번만 더 확인하자\"가 올라오면 → 타이머 10분을 켜고 \"이 시간엔 확인하지 않는다\"를 딱 1회 버틴다. 확인을 줄여도 별일 없다는 걸 몸이 배우면 불안이 스스로 내려간다."},
+  "F|X":{tag:"미래 · 도피형", name:"공상형", subtitle:"근거 없는 낙관주의자",
+    what:"불안한 현실을 직면하는 대신 머릿속 이상적 시나리오로 도망칩니다. \"어떻게든 잘 풀릴 거야\"라는 낙관, 멋진 미래 공상으로 지금의 불편을 덮습니다. 파국형의 거울상이에요(한쪽은 최악, 한쪽은 최상으로 도피).",
+    subs:[], cost:"실제 대비를 미루게 되어, 막상 그 미래가 오면 준비가 안 돼 있습니다.",
+    rx:"\"잘 되겠지\" 하고 생각을 덮으려 하면 → \"그 좋은 결과가 오려면, 오늘 내가 할 작은 행동 하나는?\"를 물어본다. 공상이 한 걸음의 행동이 되면 낙관이 실제 대비가 된다."}
+};
+
+let idx=0, answers=[], resultType=null;
+
+function start(){ idx=0; answers=[]; show("quiz"); render(); }
+function show(id){ document.querySelectorAll(".screen").forEach(s=>s.classList.remove("on"));
+  document.getElementById(id).classList.add("on"); window.scrollTo(0,0); }
+
+function render(){
+  const q=Q[idx];
+  document.getElementById("bar").style.width=(idx/Q.length*100)+"%";
+  document.getElementById("qnum").textContent=`질문 ${idx+1} / ${Q.length}`;
+  document.getElementById("qtext").textContent=q.t;
+  const box=document.getElementById("opts"); box.innerHTML="";
+  q.o.forEach(([label,val])=>{
+    const b=document.createElement("button");
+    b.className="opt"; b.textContent=label; b.onclick=()=>pick(val);
+    box.appendChild(b);
+  });
+  document.getElementById("backbtn").style.display=idx>0?"inline-block":"none";
+}
+function pick(val){ answers[idx]={ax:Q[idx].ax,val}; idx++;
+  if(idx>=Q.length){ score(); } else { render(); } }
+function back(){ if(idx>0){ idx--; answers.pop(); render(); } }
+
+function score(){
+  let P=0,N=0,F=0,M=0,B=0,X=0;
+  answers.forEach(a=>{
+    if(a.ax==="time"){ if(a.val==="P")P++; else if(a.val==="N")N++; else F++; }
+    else { if(a.val==="M")M++; else if(a.val==="B")B++; else X++; }
+  });
+  const times=[["F",F],["P",P],["N",N]]; times.sort((a,b)=>b[1]-a[1]); const time=times[0][0];
+  const procs=[["X",X],["M",M],["B",B]]; procs.sort((a,b)=>b[1]-a[1]); const proc=procs[0][0];
+  resultType=time+"|"+proc;
+  let second="";
+  if(procs[1][1]>0 && (procs[0][1]-procs[1][1])<=1 && procs[1][0]!==proc){ second=PROC_NAME[procs[1][0]]; }
+  showResult(resultType,time,proc,second);
+}
+
+function showResult(key,time,proc,second){
+  const d=TYPES[key];
+  document.getElementById("rtag").textContent=d.tag;
+  document.getElementById("rtitle").textContent=d.name;
+  document.getElementById("rsubtitle").textContent=d.subtitle;
+  const sec=document.getElementById("rsecond");
+  if(second){ sec.textContent=`${PROC_NAME[proc]} 성향이 강하고, ${second} 기질도 함께 보여요.`; sec.style.display="block"; }
+  else sec.style.display="none";
+  document.getElementById("r-what").textContent=d.what;
+  const subWrap=document.getElementById("r-subs"); subWrap.innerHTML="";
+  d.subs.forEach(s=>{ const p=document.createElement("p"); p.className="sub"; p.textContent=s; subWrap.appendChild(p); });
+  document.getElementById("r-cost").textContent=d.cost;
+  document.getElementById("r-rx").textContent=d.rx;
+  buildGrid(time,proc);
+  document.getElementById("piblock").style.display="block";
+  document.getElementById("thanks").style.display="none";
+  show("result");
+}
+
+function buildGrid(time,proc){
+  const cols=["M","B","X"], rows=["P","N","F"];
+  const rowlab={P:"과거",N:"지금",F:"나중"};
+  let html="<tr><th></th><th>사고</th><th>행동</th><th>도피</th></tr>";
+  rows.forEach(r=>{
+    html+=`<tr><td class="rowlab">${rowlab[r]}</td>`;
+    cols.forEach(c=>{ const k=r+"|"+c; const hit=(r===time&&c===proc)?" hit":"";
+      html+=`<td class="cell${hit}">${GRID_NAME[k]}</td>`; });
+    html+="</tr>";
+  });
+  document.getElementById("axisgrid").innerHTML=html;
+}
+
+function intent(choice){
+  if(ENDPOINT_URL){
+    try{ const body=new URLSearchParams({type:resultType, intent:choice, ts:new Date().toISOString()});
+      fetch(ENDPOINT_URL,{method:"POST",mode:"no-cors",body}); }catch(e){}
+  }
+  document.getElementById("piblock").style.display="none";
+  const t=document.getElementById("thanks");
+  document.getElementById("thanks-d").textContent =
+    choice==="아니" ? "솔직한 응답이 가장 큰 도움이 돼요." : "관심 고마워요. 곧 더 깊은 버전으로 찾아올게요.";
+  t.style.display="block";
+}
+function restart(){ idx=0; answers=[]; resultType=null; show("intro"); }
+</script>
+</body>
+</html>
